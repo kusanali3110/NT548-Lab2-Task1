@@ -13,7 +13,6 @@ provider "aws" {
 
 module "vpc" {
     source = "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=12caf8056992a6e327c584475f1522d05e77284d"
-    version = "5.14.0"
 
     name = "my-vpc"
     cidr = "10.0.0.0/16"
@@ -32,7 +31,6 @@ module "vpc" {
 
 module "public_sg" {
     source  = "git::https://github.com/terraform-aws-modules/terraform-aws-security-group.git?ref=43798eab255616bd23ef4140f50252d585c9c51b"
-    version = "5.2.0"
 
     name        = "public-sg"
     description = "Security group for public subnet"
@@ -58,7 +56,6 @@ module "public_sg" {
 
 module "private_sg" {
     source  = "git::https://github.com/terraform-aws-modules/terraform-aws-security-group.git?ref=43798eab255616bd23ef4140f50252d585c9c51b"
-    version = "5.2.0"
 
     name        = "pritave-sg"
     description = "Security group for public subnet"
@@ -83,7 +80,6 @@ module "private_sg" {
 
 module "public_ec2" {
   source  = "git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance.git?ref=6f851d84fd878cb75b88921e328eaf8ce26c7343"
-  version = "5.7.1"
 
   name = "public_ec2"
 
@@ -100,7 +96,6 @@ module "public_ec2" {
 
 module "private_ec2" {
   source  = "git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance.git?ref=6f851d84fd878cb75b88921e328eaf8ce26c7343"
-  version = "5.7.1"
 
   name = "private_ec2"
 
