@@ -8,6 +8,13 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read  # Chỉ quyền đọc để truy cập mã nguồn
+  id-token: write  # Nếu cần dùng cho các hành động cụ thể như OpenID Connect (OIDC) với AWS
+  actions: read  # Quyền đọc cho actions
+  checks: write  # Chỉ định quyền ghi nếu cần cho GitHub Checks API
+  pull-requests: write  # Quyền ghi nếu workflow cần cập nhật pull requests
+
 jobs:
   terraform-deploy:
     runs-on: ubuntu-latest
