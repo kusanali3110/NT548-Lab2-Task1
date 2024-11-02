@@ -1,0 +1,64 @@
+name: "Deploy Terraform Infrastructure with Security Check"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: "us-west-2a" # Thay đổi vùng nếu cần
+      TF_VAR_aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      TF_VAR_aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TF_VERSION: "1.5.0"  # Chọn phiên bản Terraform phù hợp
+
+    steps:
+      # Bước 1: Checkout mã nguồn
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+
+      # Bước 2: Thiết lập Terraform
+      - name: "Setup Terraform"
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      # Bước 3: Cài đặt Checkov để kiểm tra bảo mật
+      - name: "Install Checkov"
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install checkov
+
+      # Bước 4: Chạy Checkov để kiểm tra bảo mật
+      - name: "Run security checks with Checkov"
+        run: checkov -d .
+
+      # Bước 5: Thiết lập các biến môi trường AWS từ Secrets GitHub
+      - name: "Configure AWS Credentials"
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Bước 6: Khởi tạo Terraform
+      - name: "Terraform Init"
+        run: terraform init
+
+      # Bước 7: Kiểm tra và áp dụng mã Terraform (plan và apply)
+      - name: "Terraform Plan"
+        run: terraform plan -out=tfplan
+
+      - name: "Terraform Apply"
+        if: success()
+        run: terraform apply -auto-approve tfplan
+
+      # Bước 8: Dọn dẹp tệp tin kế hoạch Terraform
+      - name: "Cleanup Terraform Plan file"
+        run: rm tfplan
