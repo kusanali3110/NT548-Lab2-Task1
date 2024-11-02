@@ -99,7 +99,7 @@ module "public_ec2" {
 }
 
 module "private_ec2" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
+  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance.git?ref=6f851d84fd878cb75b88921e328eaf8ce26c7343"
   version = "5.7.1"
 
   name = "private_ec2"
